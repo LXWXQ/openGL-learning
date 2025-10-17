@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{50a25485-bc49-46c8-8930-570939886dc9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\GLAD\src\glad.c">
@@ -21,22 +24,46 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="shader.cpp">
+    <ClCompile Include="Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="texture.cpp">
+    <ClCompile Include="Texture.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexBuffer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexArray.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shader.h">
+    <ClInclude Include="Shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="texture.h">
+    <ClInclude Include="Texture.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdParty\stb-master\stb_image.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexArray.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

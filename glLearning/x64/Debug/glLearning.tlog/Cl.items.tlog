@@ -1,4 +1,8 @@
-H:\glStudy\glLearning\3rdParty\GLAD\src\glad.c;H:\glStudy\glLearning\glLearning\x64\Debug\glad.obj
-H:\glStudy\glLearning\glLearning\main.cpp;H:\glStudy\glLearning\glLearning\x64\Debug\main.obj
-H:\glStudy\glLearning\glLearning\shader.cpp;H:\glStudy\glLearning\glLearning\x64\Debug\shader.obj
-H:\glStudy\glLearning\glLearning\texture.cpp;H:\glStudy\glLearning\glLearning\x64\Debug\texture.obj
+D:\GL\openGL-learning\3rdParty\GLAD\src\glad.c;D:\GL\openGL-learning\glLearning\x64\Debug\glad.obj
+D:\GL\openGL-learning\glLearning\IndexBuffer.cpp;D:\GL\openGL-learning\glLearning\x64\Debug\IndexBuffer.obj
+D:\GL\openGL-learning\glLearning\main.cpp;D:\GL\openGL-learning\glLearning\x64\Debug\main.obj
+D:\GL\openGL-learning\glLearning\Shader.cpp;D:\GL\openGL-learning\glLearning\x64\Debug\Shader.obj
+D:\GL\openGL-learning\glLearning\ShaderManager.cpp;D:\GL\openGL-learning\glLearning\x64\Debug\ShaderManager.obj
+D:\GL\openGL-learning\glLearning\Texture.cpp;D:\GL\openGL-learning\glLearning\x64\Debug\Texture.obj
+D:\GL\openGL-learning\glLearning\VertexArray.cpp;D:\GL\openGL-learning\glLearning\x64\Debug\VertexArray.obj
+D:\GL\openGL-learning\glLearning\VertexBuffer.cpp;D:\GL\openGL-learning\glLearning\x64\Debug\VertexBuffer.obj

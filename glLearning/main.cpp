@@ -2,8 +2,10 @@
 #include <GLFW/glfw3.h>
 #include<iostream>
 #include "shader.h"
-#include "texture.h"
+#include "ShaderManager.h"
+#include "Texture.h"
 #include <filesystem>
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -24,7 +26,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);  // for ios
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "GL_Engine", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -84,8 +86,7 @@ int main()
 
     glBindVertexArray(0);//unbind VAO
 
-
-    Shader* shader = new Shader("../Shader/learn.vs", "../Shader/learn.fs");
+    auto Shader = ShaderManager::getInstance().load("test_Shader", "../Shader/learn.vs", "../Shader/learn.fs");
     Texture* texture1 = new Texture("../texture/container.jpg");
     Texture* texture2 = new Texture("../texture/wall.jpg");
     //shader->addTexture(texture1->getTexture(), "texture1");
@@ -96,8 +97,8 @@ int main()
     //int vertexColorLocation = glGetUniformLocation(shader->getProgram(), "timeColor");
     //glUniform4f(vertexColorLocation, 0.0f, 0.5f, 0.0f, 1.0f);
 
-    glUniform1i(glGetUniformLocation(shader->getProgram(), "texture1"), 0);
-    glUniform1i(glGetUniformLocation(shader->getProgram(), "texture2"), 1);
+    glUniform1i(glGetUniformLocation(Shader->getProgram(), "texture1"), 0);
+    glUniform1i(glGetUniformLocation(Shader->getProgram(), "texture2"), 1);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -106,12 +107,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);//颜色缓冲、深度缓冲、模板缓冲
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture2->getTexture());
+        glBindTexture(GL_TEXTURE_2D, texture2->getID());
 
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture1->getTexture());
+        glBindTexture(GL_TEXTURE_2D, texture1->getID());
 
-        shader->Use();
+        Shader->use();
         
         glBindVertexArray(VAO);//draw triangles
        // glDrawArrays(GL_TRIANGLES, 0, 3);//直接使用VBO绘制

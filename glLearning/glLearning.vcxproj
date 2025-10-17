@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\3rdParty\GLAD\include;..\3rdParty\stb-master;..\3rdParty\GLFW\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\GLAD\include;..\3rdParty\stb-master;..\3rdParty\glm;..\3rdParty\GLFW\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\3rdParty\GLFW;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\3rdParty\GLAD\include;..\3rdParty\stb-master;..\3rdParty\GLFW\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\glm;..\3rdParty\GLAD\include;..\3rdParty\stb-master;..\3rdParty\GLFW\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\3rdParty\GLFW;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -112,6 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,6 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,14 +140,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\GLAD\src\glad.c" />
+    <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="shader.cpp" />
-    <ClCompile Include="texture.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShaderManager.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="VertexArray.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\stb-master\stb_image.h" />
-    <ClInclude Include="shader.h" />
-    <ClInclude Include="texture.h" />
+    <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShaderManager.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="VertexArray.h" />
+    <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

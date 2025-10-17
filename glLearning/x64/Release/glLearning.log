@@ -1,0 +1,15 @@
+﻿  glad.c
+  IndexBuffer.cpp
+  main.cpp
+  Shader.cpp
+  ShaderManager.cpp
+  Texture.cpp
+  VertexArray.cpp
+  VertexBuffer.cpp
+  正在生成代码
+  Previous IPDB not found, fall back to full compilation.
+  All 695 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成代码的生成
+  glLearning.vcxproj -> D:\GL\openGL-learning\x64\Release\glLearning.exe
+  'pwsh.exe' 不是内部或外部命令，也不是可运行的程序
+  或批处理文件。
