@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\3rdParty\GLAD\include;..\3rdParty\stb-master;..\3rdParty\glm;..\3rdParty\GLFW\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\imgui-master;..\3rdParty\GLAD\include;..\3rdParty\stb-master;..\3rdParty\glm;..\3rdParty\GLFW\include;..\3rdParty\assimp\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\3rdParty\GLFW;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\3rdParty\glm;..\3rdParty\GLAD\include;..\3rdParty\stb-master;..\3rdParty\GLFW\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\glm;..\3rdParty\GLAD\include;..\3rdParty\stb-master;..\3rdParty\GLFW\include;..\3rdParty\assimp\include;..\3rdParty\imgui-master;$(IncludePath)</IncludePath>
     <LibraryPath>..\3rdParty\GLFW;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -117,7 +117,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\3rdParty\assimp\lib\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,13 +136,24 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\3rdParty\assimp\lib\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\GLAD\src\glad.c" />
+    <ClCompile Include="..\3rdParty\imgui-master\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-master\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-master\imgui.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-master\imgui_demo.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-master\imgui_draw.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-master\imgui_tables.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-master\imgui_widgets.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -149,8 +161,20 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\3rdParty\imgui-master\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="..\3rdParty\imgui-master\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\3rdParty\imgui-master\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\3rdParty\imgui-master\imconfig.h" />
+    <ClInclude Include="..\3rdParty\imgui-master\imgui.h" />
+    <ClInclude Include="..\3rdParty\imgui-master\imgui_internal.h" />
+    <ClInclude Include="..\3rdParty\imgui-master\imstb_rectpack.h" />
+    <ClInclude Include="..\3rdParty\imgui-master\imstb_textedit.h" />
+    <ClInclude Include="..\3rdParty\imgui-master\imstb_truetype.h" />
     <ClInclude Include="..\3rdParty\stb-master\stb_image.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Texture.h" />

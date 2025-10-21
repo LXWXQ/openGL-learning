@@ -72,18 +72,19 @@ public:
 
     // 重新加载纹理 (热重载)
     bool reload();
-
+    std::string getPath() { return m_path;};
     // 生成 Mipmap
     void generateMipmaps();
 
     // 设置纹理参数
     void setParameter(GLenum param, GLint value);
     void setParameter(GLenum param, GLfloat value);
-
+    
 private:
+    std::string m_path;  // 保存路径用于重载
     GLuint m_textureID = 0;
     Type m_type = Type::Texture2D;
-    std::string m_path;  // 保存路径用于重载
+    
     Parameters m_params;
 
     // 纹理信息

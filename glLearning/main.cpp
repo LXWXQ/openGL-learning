@@ -1,22 +1,20 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include<iostream>
-#include "shader.h"
+#include "Shader.h"
 #include "ShaderManager.h"
+#include "Camera.h"
+#include "Model.h"
 #include "Texture.h"
 #include <filesystem>
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)//按下Esc退出程序
-        glfwSetWindowShouldClose(window, true);
-}
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
 int main()
 {
@@ -24,107 +22,153 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);  // for ios
 
     GLFWwindow* window = glfwCreateWindow(800, 600, "GL_Engine", NULL, NULL);
+
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
     }
-    glfwMakeContextCurrent(window);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1); // Enable vsync
+
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
 
-    glViewport(0, 0, 800, 600);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);//据窗口大小动态调整视口大小
-
-    float vertices[] = {
-      0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
-     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
-    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
-    };
-
-    unsigned int indices[] = {
-        // 注意索引从0开始! 
-        // 此例的索引(0,1,2,3)就是顶点数组vertices的下标，
-        // 这样可以由下标代表顶点组合成矩形
-
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
-
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    //VBO
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);//生成
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);//绑定
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);//输送数据
-
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);//顶点位置属性
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));//顶点颜色属性
-    glEnableVertexAttribArray(1);
-    // texture coord attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));//顶点纹理坐标属性
-    glEnableVertexAttribArray(2);
+    glEnable(GL_DEPTH_TEST);
 
 
-    glBindVertexArray(0);//unbind VAO
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
-    auto Shader = ShaderManager::getInstance().load("test_Shader", "../Shader/learn.vs", "../Shader/learn.fs");
-    Texture* texture1 = new Texture("../texture/container.jpg");
-    Texture* texture2 = new Texture("../texture/wall.jpg");
-    //shader->addTexture(texture1->getTexture(), "texture1");
-   // shader->addTexture(texture2->getTexture(), "texture2");
-    
-   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
+  
+    ImVec4 clear_color = ImVec4(0.1f, 0.1f, 0.1f, 1.00f);
+    std::string backpack = std::string("../Resource/Model/backpack/backpack.obj");
+    Model* myModel =new Model(backpack);
+    std::string shader = std::string("../Resource/Shader/model");
 
-    //int vertexColorLocation = glGetUniformLocation(shader->getProgram(), "timeColor");
-    //glUniform4f(vertexColorLocation, 0.0f, 0.5f, 0.0f, 1.0f);
-
-    glUniform1i(glGetUniformLocation(Shader->getProgram(), "texture1"), 0);
-    glUniform1i(glGetUniformLocation(Shader->getProgram(), "texture2"), 1);
-
+    auto myShader = ShaderManager::getInstance().load("Model", shader + ".vs", shader + ".fs");
+    glm::vec3 pointLightPos = glm::vec3(0, 1, 0);
+    // --- 渲染循环 ---
     while (!glfwWindowShouldClose(window))
     {
-        processInput(window);
-        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);//背景颜色
-        glClear(GL_COLOR_BUFFER_BIT);//颜色缓冲、深度缓冲、模板缓冲
+        // CRITICAL: 处理事件
+        glfwPollEvents();
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture2->getID());
+        // 时间计算
+        float currentFrame = static_cast<float>(glfwGetTime());
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture1->getID());
+        // 开始ImGui帧
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-        Shader->use();
-        
-        glBindVertexArray(VAO);//draw triangles
-       // glDrawArrays(GL_TRIANGLES, 0, 3);//直接使用VBO绘制
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);//直接使用EBO绘制
+        // 更新相机
+        camera.UpdateFromInput(io, deltaTime);
 
-        glfwSwapBuffers(window);//交换缓冲
-        glfwPollEvents();//获取io信息(键盘鼠标)
+        // 创建UI窗口
+        ImGui::Begin("Engine Controls");
+        ImGui::Text("Position: %.2f, %.2f, %.2f", camera.Position.x, camera.Position.y, camera.Position.z);
+       
+        ImGui::End();
+
+        // --- 渲染 ---
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+        glViewport(0, 0, display_w, display_h);
+
+        // 1. 清屏
+        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        myShader->use();
+
+        // --- 设置矩阵 ---
+        glm::mat4 view = camera.GetViewMatrix();
+
+        float aspectRatio = (float)display_w / (float)display_h;
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), aspectRatio, 0.1f, 100.0f);
+
+        // 1. 从一个单位矩阵开始 (代表没有进行任何变换)
+        glm::mat4 model = glm::mat4(1.0f);
+
+        // 2. 应用变换 (注意: 顺序通常是 缩放 -> 旋转 -> 位移)
+        // a. 把它移动到世界坐标 (0.0f, -1.0f, 0.0f)
+        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+
+        // b. 让它缩小到原来的0.5倍
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+
+        // c. 让它绕Y轴旋转 (我们可以让它随时间旋转，看起来更酷)
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        myShader->setMat4("u_Projection", projection);
+        myShader->setMat4("u_View", view);
+        myShader->setMat4("u_Model", model);
+        myShader->setMat3("u_NormalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+
+        // --- 设置相机位置 ---
+        myShader->setVec3("u_ViewPos_World", camera.Position);
+
+        // --- 设置材质 ---
+        // (这部分通常由 Mesh::draw 方法处理，它会绑定纹理并设置 sampler uniform)
+        // 你只需要在创建Mesh时，确保MeshTexture的类型是 "texture_diffuse" 或 "texture_specular"
+        // 你还需要设置光泽度
+        myShader->setFloat("u_Shininess", 32.0f); // 这是一个示例值
+
+        // --- 设置方向光 ---
+        myShader->setVec3("u_DirLight.direction",glm::vec3(-0.2f,-1.0f,-0.3f));
+        myShader->setVec3("u_DirLight.color", glm::vec3(1.0f, 1.0f, 1.0f));
+
+        // --- 设置点光源 ---
+        myShader->setVec3("u_PointLight.position", pointLightPos); // 假设这是一个在场景中移动的vec3
+        myShader->setVec3("u_PointLight.color", glm::vec3(1.0f, 1.0f, 0.8f));
+        myShader->setFloat("u_PointLight.constant", 1.0f);
+        myShader->setFloat("u_PointLight.linear", 0.09f);
+        myShader->setFloat("u_PointLight.quadratic", 0.032f);
+
+        // --- 绘制模型 ---
+        myModel->draw(myShader);
+
+        // 2. 渲染3D场景
+        // if (myShader) {
+        //     myShader->use();
+        //     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)display_w / (float)display_h, 0.1f, 100.0f);
+        //     glm::mat4 view = camera.GetViewMatrix();
+        //     myShader->setMat4("projection", projection);
+        //     myShader->setMat4("view", view);
+        //
+        //     glm::mat4 model = glm::mat4(1.0f);
+        //     myShader->setMat4("model", model);
+        //     myModel.draw(myShader);
+        // }
+
+        // 3. 渲染ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        // 交换缓冲
+        glfwSwapBuffers(window);
     }
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glfwTerminate();
 
+    // --- 清理 ---
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    glfwDestroyWindow(window);
+    glfwTerminate();
     return 0;
 }

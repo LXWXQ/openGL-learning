@@ -2,6 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <regex>
+#include <filesystem>
 #include <glm/gtc/type_ptr.hpp>
 
 // ===== 构造函数 =====
@@ -146,8 +148,17 @@ void Shader::initFromFiles(const std::string& vertexPath,
     std::string fragmentCode = readFile(fragmentPath);
     std::string geometryCode;
 
+    // ===== 新增: 预处理#include指令 =====
+    std::unordered_set<std::string> includedFiles;
+    vertexCode = processIncludes(vertexCode, getDirectory(vertexPath), includedFiles);
+
+    includedFiles.clear();
+    fragmentCode = processIncludes(fragmentCode, getDirectory(fragmentPath), includedFiles);
+
     if (!geometryPath.empty()) {
         geometryCode = readFile(geometryPath);
+        includedFiles.clear();
+        geometryCode = processIncludes(geometryCode, getDirectory(geometryPath), includedFiles);
     }
 
     // 编译着色器
@@ -251,4 +262,114 @@ GLint Shader::getUniformLocation(const std::string& name) const {
     // 缓存结果
     m_uniformLocationCache[name] = location;
     return location;
+}
+
+// ===== #include预处理器实现 =====
+std::string Shader::processIncludes(const std::string& source,
+    const std::string& currentDir,
+    std::unordered_set<std::string>& includedFiles,
+    int depth) {
+    // 防止无限递归
+    const int MAX_INCLUDE_DEPTH = 32;
+    if (depth > MAX_INCLUDE_DEPTH) {
+        throw std::runtime_error("ERROR::SHADER::INCLUDE: Maximum include depth exceeded (possible circular include)");
+    }
+
+    std::stringstream result;
+    std::stringstream sourceStream(source);
+    std::string line;
+    int lineNumber = 0;
+
+    // 正则表达式匹配 #include "path" 或 #include <path>
+    std::regex includeRegex(R"(^\s*#\s*include\s+[\"<]([^\"<>]+)[\">])");
+
+    while (std::getline(sourceStream, line)) {
+        lineNumber++;
+        std::smatch match;
+
+        if (std::regex_search(line, match, includeRegex)) {
+            // 找到#include指令
+            std::string includePath = match[1].str();
+            std::string fullPath = resolvePath(currentDir, includePath);
+
+            // 防止重复包含
+            if (includedFiles.find(fullPath) != includedFiles.end()) {
+                // 已经包含过,添加注释
+                result << "// Already included: " << includePath << "\n";
+                continue;
+            }
+
+            // 标记为已包含
+            includedFiles.insert(fullPath);
+
+            try {
+                // 读取被包含的文件
+                std::string includedSource = readFile(fullPath);
+
+                // 添加来源注释(方便调试)
+                result << "// ===== Begin include: " << includePath << " =====\n";
+
+                // 递归处理被包含文件中的#include
+                std::string processedInclude = processIncludes(
+                    includedSource,
+                    getDirectory(fullPath),
+                    includedFiles,
+                    depth + 1
+                );
+
+                result << processedInclude;
+                result << "// ===== End include: " << includePath << " =====\n";
+            }
+            catch (const std::exception& e) {
+                std::string error = "ERROR::SHADER::INCLUDE: Failed to process include '" +
+                    includePath + "' at line " + std::to_string(lineNumber) +
+                    "\n" + e.what();
+                throw std::runtime_error(error);
+            }
+        }
+        else {
+            // 普通行,直接添加
+            result << line << "\n";
+        }
+    }
+
+    return result.str();
+}
+
+std::string Shader::getDirectory(const std::string& filepath) {
+    try {
+        std::filesystem::path p(filepath);
+        return p.parent_path().string();
+    }
+    catch (...) {
+        // 如果filesystem失败,使用简单的字符串处理
+        size_t lastSlash = filepath.find_last_of("/\\");
+        if (lastSlash != std::string::npos) {
+            return filepath.substr(0, lastSlash);
+        }
+        return ".";
+    }
+}
+
+std::string Shader::resolvePath(const std::string& basePath, const std::string& includePath) {
+    try {
+        std::filesystem::path base(basePath);
+        std::filesystem::path include(includePath);
+
+        // 如果includePath是绝对路径,直接返回
+        if (include.is_absolute()) {
+            return include.string();
+        }
+
+        // 否则相对于basePath解析
+        std::filesystem::path resolved = base / include;
+        return resolved.lexically_normal().string();
+    }
+    catch (...) {
+        // 如果filesystem失败,使用简单的字符串拼接
+        if (basePath.empty() || basePath == ".") {
+            return includePath;
+        }
+        return basePath + "/" + includePath;
+    }
 }

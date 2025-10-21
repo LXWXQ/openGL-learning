@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <memory>
 
 class Shader {
@@ -76,6 +77,14 @@ private:
     void initFromFiles(const std::string& vertexPath,
         const std::string& fragmentPath,
         const std::string& geometryPath = "");
+
+    // ===== 新增: #include预处理器 =====
+    std::string processIncludes(const std::string& source,
+        const std::string& currentDir,
+        std::unordered_set<std::string>& includedFiles,
+        int depth = 0);
+    std::string getDirectory(const std::string& filepath);
+    std::string resolvePath(const std::string& basePath, const std::string& includePath);
 };
 
 // 智能指针类型别名
