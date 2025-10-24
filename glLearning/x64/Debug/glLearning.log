@@ -1,15 +1,7 @@
-﻿  Mesh.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\memory(3597,56): warning C4267: “参数”: 从“size_t”转换到“uint32_t”，可能丢失数据
-  (编译源文件“Mesh.cpp”)
-      C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\memory(3597,56):
-      模板实例化上下文(最早的实例化上下文)为
-          D:\GL\openGL-learning\glLearning\Mesh.cpp(13,18):
-          查看对正在编译的函数 模板 实例化“std::unique_ptr<VertexBuffer,std::default_delete<VertexBuffer>> std::make_unique<VertexBuffer,_Ty*,unsigned __int64,0>(_Ty *&&,unsigned __int64 &&)”的引用
-          with
-          [
-              _Ty=Vertex
-          ]
-  
+﻿  Camera.cpp
+  main.cpp
+  正在生成代码...
+LINK : warning LNK4098: 默认库“MSVCRT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
   glLearning.vcxproj -> D:\GL\openGL-learning\x64\Debug\glLearning.exe
   'pwsh.exe' 不是内部或外部命令，也不是可运行的程序
   或批处理文件。

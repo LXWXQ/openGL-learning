@@ -100,8 +100,8 @@ int main()
         glm::mat4 view = camera.GetViewMatrix();
 
         float aspectRatio = (float)display_w / (float)display_h;
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), aspectRatio, 0.1f, 100.0f);
-
+        camera.projection = glm::perspective(glm::radians(camera.Zoom), aspectRatio, 0.1f, 100.0f);
+    
         // 1. 从一个单位矩阵开始 (代表没有进行任何变换)
         glm::mat4 model = glm::mat4(1.0f);
 
@@ -115,7 +115,7 @@ int main()
         // c. 让它绕Y轴旋转 (我们可以让它随时间旋转，看起来更酷)
         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-        myShader->setMat4("u_Projection", projection);
+        myShader->setMat4("u_Projection", camera.projection);
         myShader->setMat4("u_View", view);
         myShader->setMat4("u_Model", model);
         myShader->setMat3("u_NormalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

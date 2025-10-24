@@ -39,7 +39,7 @@ public:
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom; // Field of View (FOV)
-
+    glm::mat4 projection = glm::mat4(1.0);//暂时放这里
     // --- 构造函数 ---
     // 使用向量构造
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
